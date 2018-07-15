@@ -36,7 +36,7 @@ public class CouponView extends View {
     private String mMainTitle = "通用券";
     private String mSubtitle = "全品类通用";
     private String mDateText = "有效期：2018.01.20至2018.05.20";
-    private int mGradientFromColor, mGradientToColor;
+    private int mGradientColorFrom, mGradientColorEnd;
 
 
     public CouponView(Context context) {
@@ -75,8 +75,8 @@ public class CouponView extends View {
             if (bevelText != null && bevelText.length() > 0)
                 mRightBevel = bevelText;
 
-            mGradientFromColor = a.getColor(R.styleable.CouponView_gradientFrom, Color.parseColor("#ff9393"));
-            mGradientToColor = a.getColor(R.styleable.CouponView_gradientTo, Color.parseColor("#ff6667"));
+            mGradientColorFrom = a.getColor(R.styleable.CouponView_gradientFrom, Color.parseColor("#ff9393"));
+            mGradientColorEnd = a.getColor(R.styleable.CouponView_gradientTo, Color.parseColor("#ff6667"));
         } finally {
             a.recycle();
         }
@@ -106,10 +106,9 @@ public class CouponView extends View {
         super.onMeasure(widthMeasureSpec, heightMeasureSpec);
         Log.i(TAG, "call onMeasure");
 
+        //高度根据宽按比例设置
         int _width = MeasureSpec.getSize(widthMeasureSpec);
         int _height = _width * 100 / 345;
-
-        //高度根据宽按比例设置
         setMeasuredDimension(_width, _height);
     }
 
@@ -123,17 +122,17 @@ public class CouponView extends View {
         Log.i(TAG, "call onSizeChanged");
 
         mWidth = getWidth();
-//        mLeftSquareEdge = mWidth * 100 / 345;
         mLeftSquareEdge = getHeight();
         radius = mWidth * 5 / 345;
-        rectBottom = new RectF(mLeftSquareEdge - radius, mLeftSquareEdge - radius, mLeftSquareEdge + radius, mLeftSquareEdge + radius);
-        rectTop = new RectF(mLeftSquareEdge - radius, -radius, mLeftSquareEdge + radius, radius);
+        rectBottom = new RectF(mLeftSquareEdge - radius, mLeftSquareEdge - radius,
+                mLeftSquareEdge + radius, mLeftSquareEdge + radius);
+        rectTop = new RectF(mLeftSquareEdge - radius, -radius,
+                mLeftSquareEdge + radius, radius);
 
         //设置画笔渐变，左中心点到右中心点
         LinearGradient lg = new LinearGradient(0, mLeftSquareEdge / 2,
                 mLeftSquareEdge, mLeftSquareEdge / 2,
-                mGradientFromColor, mGradientToColor,
-                Shader.TileMode.CLAMP);
+                mGradientColorFrom, mGradientColorEnd, Shader.TileMode.CLAMP);
         mPaint.setShader(lg);
 
         //计算虚线
@@ -160,25 +159,24 @@ public class CouponView extends View {
         mLeftTextPath.moveTo(0, mLeftSquareEdge / 2);
         mLeftTextPath.rLineTo(mLeftSquareEdge, 0);
 
-        calTextLength();
+        calLeftTextCoordinate();
     }
 
-    private float mMarkTextSp = 16, mValueTextSp = 32, mConditionTextSp = 14;
+    private float mMarkTextSize = 16, mValueTextSize = 32, mConditionTextSize = 14;     //字体大小，单位sp
     private float mLeftMoneyMarkX, mLeftMoneyValueX, mLeftMoneyMarkY, mLeftMoneyValueY;
     private float mHMargin = 2;  //标记和数字之间的间距(水平间距)，单位dp
     private float mVMargin = 2;//上下间距，条件和数字之间，单位dp
-    private float mMoneyConfitionX, mMoneyConfitionY;
+    private float mMoneyConditionX, mMoneyConditionY;
 
-    //计算文字的起点坐标
-    private void calTextLength() {
+    private void calLeftTextCoordinate() {
         //默认是单行文字：
-        mTextPaint.setTextSize(spToPx(mMarkTextSp, getContext()));
+        mTextPaint.setTextSize(spToPx(mMarkTextSize, getContext()));
         float _leftMoneyMarkWidth = mTextPaint.measureText(mLeftMoneyMark);
-        float _markHeight = -mTextPaint.getFontMetrics().ascent + mTextPaint.getFontMetrics().descent;
+//        float _markHeight = -mTextPaint.getFontMetrics().ascent + mTextPaint.getFontMetrics().descent;
         //暂时不用计算¥的y坐标，就跟后面的数字底部对齐，使用数字的y值吧
 //            mLeftMoneyMarkY = mLeftSquareEdge / 2 + getTextBaseline2CenterLength(mTextPaint);
 
-        mTextPaint.setTextSize(spToPx(mValueTextSp, getContext()));
+        mTextPaint.setTextSize(spToPx(mValueTextSize, getContext()));
         float _leftMoneyValueWidth = mTextPaint.measureText(mLeftMoneyValue);
         float _valueDescent = mTextPaint.getFontMetrics().descent;
         float _valueHeight = -mTextPaint.getFontMetrics().ascent + _valueDescent;
@@ -190,23 +188,22 @@ public class CouponView extends View {
 
         //如果是多行，就需要重新赋值上面的Y坐标：
         if (mLeftTextType == TYPE_MULTI) {
-            mTextPaint.setTextSize(spToPx(mConditionTextSp, getContext()));
+            mTextPaint.setTextSize(spToPx(mConditionTextSize, getContext()));
             float _conditionDescent = mTextPaint.getFontMetrics().descent;
             float _conditionHeight = -mTextPaint.getFontMetrics().ascent + _conditionDescent;
             float _leftMoneyConditionWidth = mTextPaint.measureText(mLeftMoneyCondition);
-            mMoneyConfitionX = mLeftSquareEdge / 2 - _leftMoneyConditionWidth / 2;
+            mMoneyConditionX = mLeftSquareEdge / 2 - _leftMoneyConditionWidth / 2;
 
             float _allHeight = dip2px(getContext(), mVMargin) + _conditionHeight + _valueHeight;
-            mMoneyConfitionY = _allHeight / 2 - _conditionDescent + mLeftSquareEdge / 2;
+            mMoneyConditionY = _allHeight / 2 - _conditionDescent + mLeftSquareEdge / 2;
 
             mLeftMoneyValueY = _allHeight / 2 - _conditionHeight - dip2px(getContext(), mVMargin) - _valueDescent + mLeftSquareEdge / 2;
             Log.i(TAG, "mLeftMoneyValueY" + mLeftMoneyValueY);
         }
-
     }
 
-    //获取文字baseline距离中点的距离
     private float getTextBaseline2CenterLength(Paint paint) {
+        //获取文字baseline距离中点的距离
         float _ascent = paint.getFontMetrics().ascent;
         float _descent = paint.getFontMetrics().descent;
         return (-_ascent + _descent) / 2 - _descent;
@@ -224,10 +221,15 @@ public class CouponView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         Log.i(TAG, "call onDraw ");
-        secondDraw(canvas);
+
+        drawLeftBg(canvas);
+        drawRightBg(canvas);
+        drawRightBevelBgAndDash(canvas);
+        drawRightText(canvas);
+        drawLeftText(canvas);
     }
 
-    private void secondDraw(Canvas canvas) {
+    private void drawLeftBg(Canvas canvas) {
         //绘制左边有颜色的形状，形状右边上下四分之一圆
         mLeftPath.lineTo(0, mLeftSquareEdge);
         mLeftPath.arcTo(rectBottom, -180, 90, false);
@@ -235,7 +237,9 @@ public class CouponView extends View {
         mLeftPath.arcTo(rectTop, 90, 90, false);
         mLeftPath.lineTo(0, 0);
         canvas.drawPath(mLeftPath, mPaint);
+    }
 
+    private void drawRightBg(Canvas canvas) {
         //绘制右边白色的形状，形状左边上下四分之一圆
         mRightPath.moveTo(mLeftSquareEdge, radius);
         mRightPath.arcTo(rectBottom, -90, 90, false);
@@ -246,17 +250,23 @@ public class CouponView extends View {
         mPaint2.setColor(Color.WHITE);
         mPaint2.setStyle(Paint.Style.FILL);
         canvas.drawPath(mRightPath, mPaint2);
+    }
 
+    private void drawRightBevelBgAndDash(Canvas canvas) {
+        //绘制斜背景
         mPaint2.setColor(Color.parseColor("#fec09b"));
         canvas.drawPath(mBevelPath, mPaint2);
 
+        //绘制虚线
         mPaint2.setStyle(Paint.Style.STROKE);
         mPaint2.setStrokeWidth(dip2px(getContext(), 1));
         mPaint2.setColor(Color.parseColor("#ebebeb"));
         mPaint2.setPathEffect(new DashPathEffect(new float[]{20, 20, 20, 20}, 0));
         canvas.drawPath(mDashPath, mPaint2);
+    }
 
-        //计算右边文字大标题位置
+    private void drawRightText(Canvas canvas) {
+        //绘制主标题
         float startTitleX = 115 * mWidth / 345;
         float startTitleY = 35 * mLeftSquareEdge / 100;
         mPaint2.reset();
@@ -266,37 +276,41 @@ public class CouponView extends View {
         mPaint2.setFakeBoldText(true);
         canvas.drawText(mMainTitle, startTitleX, startTitleY, mPaint2);
 
+        //绘制副标题
         float startTitle2Y = 58 * mLeftSquareEdge / 100;
         mPaint2.setTextSize(spToPx(12, getContext()));
         mPaint2.setColor(Color.parseColor("#666666"));
         mPaint2.setFakeBoldText(false);
         canvas.drawText(mSubtitle, startTitleX, startTitle2Y, mPaint2);
 
+        //绘制日期文字
         float startTitle3Y = 88 * mLeftSquareEdge / 100;
         mPaint2.setColor(Color.parseColor("#9c9c9c"));
         canvas.drawText(mDateText, startTitleX, startTitle3Y, mPaint2);
 
+        //绘制右边斜文字
         mPaint2.setColor(Color.WHITE);
         mPaint2.setTextAlign(Paint.Align.CENTER);//左右居中
         canvas.drawTextOnPath(mRightBevel, mBevelTextPath, 0, -12, mPaint2);
+    }
 
-        //绘制文字
-        mTextPaint.setTextSize(spToPx(mMarkTextSp, getContext()));
+    private void drawLeftText(Canvas canvas) {
+        mTextPaint.setTextSize(spToPx(mMarkTextSize, getContext()));
         canvas.drawText(mLeftMoneyMark, mLeftMoneyMarkX, mLeftMoneyValueY, mTextPaint);
-        mTextPaint.setTextSize(spToPx(mValueTextSp, getContext()));
+        mTextPaint.setTextSize(spToPx(mValueTextSize, getContext()));
         canvas.drawText(mLeftMoneyValue, mLeftMoneyValueX, mLeftMoneyValueY, mTextPaint);
         if (mLeftTextType == TYPE_MULTI) {
-            mTextPaint.setTextSize(spToPx(mConditionTextSp, getContext()));
-            canvas.drawText(mLeftMoneyCondition, mMoneyConfitionX, mMoneyConfitionY, mTextPaint);
+            mTextPaint.setTextSize(spToPx(mConditionTextSize, getContext()));
+            canvas.drawText(mLeftMoneyCondition, mMoneyConditionX, mMoneyConditionY, mTextPaint);
         }
     }
 
-    public static int dip2px(Context context, float dpValue) {
+    private int dip2px(Context context, float dpValue) {
         final float scale = context.getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
 
-    public static int spToPx(float sp, Context context) {
+    private int spToPx(float sp, Context context) {
         return (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, sp, context.getResources().getDisplayMetrics());
     }
 
