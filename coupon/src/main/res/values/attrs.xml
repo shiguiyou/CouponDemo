@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CouponView">
+        <attr name="discount" format="integer" />
+        <attr name="leftCondition" format="string" />
+        <attr name="mainTitle" format="string" />
+        <attr name="subTitle" format="string" />
+        <attr name="dateTitle" format="string" />
+        <attr name="bevelText" format="string" />
+
+        <attr name="gradientFrom" format="color" />
+        <attr name="gradientTo" format="color" />
+    </declare-styleable>
+</resources>

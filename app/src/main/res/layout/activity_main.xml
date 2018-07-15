@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#dcdcdc"
+    android:orientation="vertical"
+    android:padding="8dp"
+    tools:context=".MainActivity">
+
+    <cn.shiguiyou.coupon.CouponView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:bevelText="满减券"
+        app:discount="5"
+        app:leftCondition="满20元可用" />
+
+    <cn.shiguiyou.coupon.CouponView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:bevelText="立减券"
+        app:discount="20"
+        app:gradientFrom="#6fdfd0"
+        app:gradientTo="#3cbca3"
+        app:mainTitle="优惠券"
+        app:subTitle="只可用于xx业务" />
+</LinearLayout>
