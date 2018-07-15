@@ -1,6 +1,6 @@
 # Screenshot
 
-![](![](https://ws3.sinaimg.cn/large/006tKfTcgy1ftamv8g0a5j30u01o0n11.jpg))
+![screenshot](./capture/ss1.png)
 
 # Usage
 
