@@ -4,7 +4,7 @@
 
 # Usage
 
-直接在xml里面配置：
+高度是根据宽按一定比例自适应的，所以layout_height只需要wrap_content就行了，指定任何值都会忽略；左边的渐变颜色是从左向右渐变；其他没啥，就是一些动态计算，直接在xml里面配置：
 
 ````
 <cn.shiguiyou.coupon.CouponView
