@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <cn.shiguiyou.coupon.CarOrderCancelStateView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <cn.shiguiyou.coupon.calendar.SearchCalendarView
+        android:id="@+id/scv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
